@@ -130,14 +130,12 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
-  // TODO: Поправить расположение верхнего лого.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(32, 96, 32, 16),
-        // padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 8),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
