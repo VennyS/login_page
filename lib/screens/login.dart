@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page/components/text_field.dart';
 import 'package:login_page/components/custom_button.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-// TODO: Поправить качество иконок
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -21,8 +21,10 @@ class LoginPageState extends State<LoginPage> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Image.asset(
-          "assets/pngs/gymapp_logo.png",
+        SvgPicture.asset(
+          "assets/svgs/gymapp_logo.svg",
+          height: 85,
+          colorFilter: const ColorFilter.mode(Colors.black, BlendMode.dstIn),
         ),
         const SizedBox(
           height: 4,
@@ -32,7 +34,6 @@ class LoginPageState extends State<LoginPage> {
           textAlign: TextAlign.center,
           style: TextStyle(
               fontFamily: 'Inter',
-              // TODO: Поправить.
               fontWeight: FontWeight.w900,
               fontSize: 13,
               letterSpacing: -0.41,
@@ -107,8 +108,12 @@ class LoginPageState extends State<LoginPage> {
         ),
         CustomButton(
             text: "Войти через Telegram",
-            leftImage: "assets/pngs/telegram_logo.png",
-            showLeftImage: true,
+            leftSvg: SvgPicture.asset(
+              "assets/svgs/telegram_logo.svg",
+              height: 12,
+            ),
+            accentColor: const Color(0xFF006FFD),
+            showLeftSvg: true,
             variant: CustomButtonVariants.primary,
             // ignore: avoid_print
             onPressed: () => print("enter via telegram pressed")),
@@ -123,8 +128,9 @@ class LoginPageState extends State<LoginPage> {
   Widget bottomLogo() {
     return Column(
       children: [
-        Image.asset(
-          "assets/pngs/gymatech_logo.png",
+        SvgPicture.asset(
+          "assets/svgs/gymatech_logo.svg",
+          height: 20,
         ),
       ],
     );
