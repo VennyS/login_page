@@ -82,7 +82,7 @@ flutter:
     - family: Inter
       fonts:
         - asset: assets/fonts/inter.ttf
-        - asset: assets/fonts/inter_semibold.otf
+        - asset: assets/fonts/inter_black.otf
         - weight: 900
 
   # To add custom fonts to your application, add a fonts section here,
