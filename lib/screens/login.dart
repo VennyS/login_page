@@ -87,7 +87,7 @@ class LoginPageState extends State<LoginPage> {
         const SizedBox(height: 2),
         const TextFieldComponents(),
         const SizedBox(height: 2),
-        CustomButton(
+        CustomButtonWidget(
           text: "Войти через Telegram",
           leftSvg: SvgPicture.asset(
             "assets/svgs/telegram_logo.svg",

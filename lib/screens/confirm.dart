@@ -1,42 +1,59 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:login_page/components/code_form.dart';
 import 'package:login_page/components/custom_button.dart';
 
-class ConfirmPage extends StatelessWidget {
+class ConfirmPage extends StatefulWidget {
   const ConfirmPage({super.key});
+
+  @override
+  _ConfirmPageState createState() => _ConfirmPageState();
+}
+
+class _ConfirmPageState extends State<ConfirmPage> {
+  late int enteredCode = 0;
+  late bool isCodeCorrect = true;
+  late bool isCodeValid = false;
+
+  final GlobalKey<CodeInputWidgetState> _codeInputKey =
+      GlobalKey<CodeInputWidgetState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: const Color(0xFFD4D6DD),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 32),
+      backgroundColor: const Color(0xFFD4D6DD),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 32),
+        child: SingleChildScrollView(
           child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                color: Colors.white,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 8, 8, 64),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _topPart(context),
+                  const SizedBox(height: 36),
+                  _codeFormPart(),
+                  const SizedBox(height: 32),
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(8, 8, 8, 64),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    topPart(context),
-                    const SizedBox(height: 36),
-                    codeFormPart(),
-                    const SizedBox(height: 32),
-                  ],
-                ),
-              )),
-        ));
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
-  Widget topPart(BuildContext context) {
+  Widget _topPart(BuildContext context) {
     return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: CustomButton(
+          child: CustomButtonWidget(
             variant: CustomButtonVariants.primary,
             onPressed: () {
               Navigator.pop(context);
@@ -62,83 +79,135 @@ class ConfirmPage extends StatelessWidget {
     );
   }
 
-  Widget codeFormPart() {
+  void onCodeEntered(String code) {
+    setState(() {
+      enteredCode = int.parse(code);
+      isCodeValid = isFourDigitNumber(enteredCode);
+    });
+  }
+
+  Widget _codeFormPart() {
     return Column(
       children: [
-        sectionTitle("Подтверждение номера"),
-        sectionSubtitle(
+        _sectionTitle("Подтверждение номера"),
+        _sectionSubtitle(
             "Мы отправили код в телеграмме на номер +7 900 000 00 00"),
         const SizedBox(height: 36),
-        Container(
-          height: 60,
-          width: 250,
-          color: Colors.red,
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            CodeInputWidget(
+              key: _codeInputKey,
+              onCodeEntered: onCodeEntered,
+              accentColor: isCodeCorrect
+                  ? const Color(0xFFF1EDF5)
+                  : const Color(0xFFFFE2E5),
+            ),
+            if (!isCodeCorrect)
+              const Positioned(
+                left: -2,
+                top: -20, // Adjust as needed for exact alignment
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: 8.0), // Adjust for padding if needed
+                    child: Text(
+                      "Неверный код",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        height: 20 / 14,
+                        letterSpacing: 0.1,
+                        color: Color(0xFFED3241),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
-        const SizedBox(
-          height: 36,
-        ),
-        sendAgain(),
+        const SizedBox(height: 36),
+        _sendAgain(),
       ],
     );
   }
 
-  Widget sendAgain() {
+  bool isFourDigitNumber(int number) {
+    String numberStr = number.toString();
+    return numberStr.length == 4;
+  }
+
+  Widget _sendAgain() {
     return Column(
       children: [
-        CustomButton(
+        CustomButtonWidget(
           variant: CustomButtonVariants.primary,
-          onPressed: () => print("Enter click"),
+          onPressed: () => onClickAccept(enteredCode),
           text: "Подтвердить",
-          accentColor: const Color(0xFFA03FFF),
+          textColor: isCodeValid ? null : const Color(0xFF817B89),
+          accentColor:
+              isCodeValid ? const Color(0xFFA03FFF) : const Color(0xFFF1EDF5),
         ),
         const SizedBox(height: 24),
         GestureDetector(
-          child:
-              sectionText("Отправить повторно", color: const Color(0xFFA03FFF)),
+          child: _sectionText("Отправить повторно",
+              color: const Color(0xFFA03FFF)),
           onTap: () => print("Send again click"),
-        )
+        ),
       ],
     );
   }
 
-  Widget botIsntRunning() {
+  void onClickAccept(int code) {
+    setState(() {
+      isCodeCorrect = code == 1234;
+      _codeInputKey.currentState?.clearCode();
+      if (!isCodeCorrect) {
+        isCodeValid = false;
+      }
+    });
+  }
+
+  Widget _botIsntRunning() {
     return Column(
       children: [
-        sectionTitle("Бот не запущен"),
+        _sectionTitle("Бот не запущен"),
         const SizedBox(height: 16),
-        sectionSubtitle(
+        _sectionSubtitle(
             "Вы будете перенаправлены в Телеграм к нашему боту “Gymapp.Бот”. После нажмите “Старт” и следуйте инструкциям."),
         const SizedBox(height: 36),
-        CustomButton(
+        CustomButtonWidget(
           variant: CustomButtonVariants.primary,
           onPressed: () => print("Link to telegram click"),
           text: "Перейти в telegram",
           leftSvg: SvgPicture.asset("assets/svgs/telegram_logo.svg"),
           showLeftSvg: true,
           accentColor: const Color(0xFF006FFD),
-        )
+        ),
       ],
     );
   }
 
-  Widget codeExpired() {
+  Widget _codeExpired() {
     return Column(
       children: [
-        sectionTitle("Подтверждение номера"),
+        _sectionTitle("Подтверждение номера"),
         const SizedBox(height: 16),
-        sectionSubtitle("Срок действия кода истёк."),
+        _sectionSubtitle("Срок действия кода истёк."),
         const SizedBox(height: 36),
-        CustomButton(
+        CustomButtonWidget(
           variant: CustomButtonVariants.primary,
           onPressed: () => print("Send again click"),
           text: "Отправить новый код",
           accentColor: const Color(0xFFA03FFF),
-        )
+        ),
       ],
     );
   }
 
-  Widget sectionTitle(String text) {
+  Widget _sectionTitle(String text) {
     return Text(
       text,
       style: const TextStyle(
@@ -151,7 +220,7 @@ class ConfirmPage extends StatelessWidget {
     );
   }
 
-  Widget sectionSubtitle(String text) {
+  Widget _sectionSubtitle(String text) {
     return Text(
       text,
       style: const TextStyle(
@@ -165,7 +234,7 @@ class ConfirmPage extends StatelessWidget {
     );
   }
 
-  Widget sectionText(String text, {Color color = Colors.black}) {
+  Widget _sectionText(String text, {Color color = Colors.black}) {
     return Text(
       text,
       style: TextStyle(
