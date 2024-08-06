@@ -22,13 +22,9 @@ class ConfirmPage extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     topPart(),
-                    const SizedBox(
-                      height: 36,
-                    ),
+                    const SizedBox(height: 36),
                     codeExpired(),
-                    const SizedBox(
-                      height: 32,
-                    ),
+                    const SizedBox(height: 32),
                   ],
                 ),
               )),
@@ -45,7 +41,6 @@ class ConfirmPage extends StatelessWidget {
             onPressed: () => print("Leading click"),
             width: 48,
             height: 48,
-            // TODO: С иконкой что-то не так, поправить ее размеры.
             leftSvg: SvgPicture.asset(
               'assets/svgs/left_arrow.svg',
               width: 14,
@@ -56,9 +51,7 @@ class ConfirmPage extends StatelessWidget {
             showText: false,
           ),
         ),
-        const SizedBox(
-          height: 8,
-        ),
+        const SizedBox(height: 8),
         SvgPicture.asset(
           "assets/svgs/gymapp_logo.svg",
           height: 48,
@@ -70,40 +63,10 @@ class ConfirmPage extends StatelessWidget {
   Widget codeFormPart() {
     return Column(
       children: [
-        const Text(
-          "Подтверждение номера",
-          style: TextStyle(
-            fontFamily: "Roboto",
-            fontWeight: FontWeight.w500,
-            fontSize: 20,
-            height: 20 / 20,
-            letterSpacing: 0.1,
-          ),
-        ),
-        const Text(
-          "Мы отправили код в телеграмме",
-          style: TextStyle(
-            fontFamily: "Roboto",
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 20 / 16,
-            letterSpacing: 0.1,
-          ),
-        ),
-        const Text(
-          " на номер +7 900 000 00 00",
-          style: TextStyle(
-            fontFamily: "Roboto",
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 20 / 16,
-            letterSpacing: 0.1,
-          ),
-        ),
-        const SizedBox(
-          height: 36,
-        ),
-        // otp
+        sectionTitle("Подтверждение номера"),
+        sectionSubtitle(
+            "Мы отправили код в телеграмме на номер +7 900 000 00 00"),
+        const SizedBox(height: 36),
         Container(
           height: 60,
           width: 250,
@@ -123,20 +86,10 @@ class ConfirmPage extends StatelessWidget {
           text: "Подтвердить",
           accentColor: const Color(0xFFA03FFF),
         ),
-        const SizedBox(
-          height: 24,
-        ),
+        const SizedBox(height: 24),
         GestureDetector(
-          child: const Text(
-            "Отправить повторно",
-            style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w500,
-                fontSize: 16,
-                height: 16 / 20,
-                letterSpacing: 0.1,
-                color: Color(0xFFA03FFF)),
-          ),
+          child:
+              sectionText("Отправить повторно", color: const Color(0xFFA03FFF)),
           onTap: () => print("Send again click"),
         )
       ],
@@ -144,77 +97,32 @@ class ConfirmPage extends StatelessWidget {
   }
 
   Widget botIsntRunning() {
-    return Column(children: [
-      const Text("Бот не запущен",
-          style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w500,
-              fontSize: 20,
-              height: 1,
-              letterSpacing: 0.1)),
-      const SizedBox(
-        height: 16,
-      ),
-      const Text(
-        "Вы будете перенаправлены в Телеграм к нашему боту “Gymapp.Бот”.",
-        style: TextStyle(
-            fontFamily: 'Roboto',
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 20 / 16,
-            letterSpacing: 0.1),
-        textAlign: TextAlign.center,
-      ),
-      const Text(
-        "После нажмите “Старт” и следуйте инструкциям.",
-        style: TextStyle(
-            fontFamily: 'Roboto',
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            height: 20 / 16,
-            letterSpacing: 0.1),
-        textAlign: TextAlign.center,
-      ),
-      const SizedBox(
-        height: 36,
-      ),
-      CustomButton(
-        variant: CustomButtonVariants.primary,
-        onPressed: () => print("Link to telegram click"),
-        text: "Перейти в telegram",
-        leftSvg: SvgPicture.asset("assets/svgs/telegram_logo.svg"),
-        showLeftSvg: true,
-        accentColor: const Color(0xFF006FFD),
-      )
-    ]);
+    return Column(
+      children: [
+        sectionTitle("Бот не запущен"),
+        const SizedBox(height: 16),
+        sectionSubtitle(
+            "Вы будете перенаправлены в Телеграм к нашему боту “Gymapp.Бот”. После нажмите “Старт” и следуйте инструкциям."),
+        const SizedBox(height: 36),
+        CustomButton(
+          variant: CustomButtonVariants.primary,
+          onPressed: () => print("Link to telegram click"),
+          text: "Перейти в telegram",
+          leftSvg: SvgPicture.asset("assets/svgs/telegram_logo.svg"),
+          showLeftSvg: true,
+          accentColor: const Color(0xFF006FFD),
+        )
+      ],
+    );
   }
 
   Widget codeExpired() {
     return Column(
       children: [
-        const Text("Подтверждение номера",
-            style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w500,
-                fontSize: 20,
-                height: 1,
-                letterSpacing: 0.1)),
-        const SizedBox(
-          height: 16,
-        ),
-        const Text(
-          "Срок действия кода истёк.",
-          style: TextStyle(
-              fontFamily: 'Roboto',
-              fontWeight: FontWeight.w400,
-              fontSize: 16,
-              height: 20 / 16,
-              letterSpacing: 0.1),
-          textAlign: TextAlign.center,
-        ),
-        const SizedBox(
-          height: 36,
-        ),
+        sectionTitle("Подтверждение номера"),
+        const SizedBox(height: 16),
+        sectionSubtitle("Срок действия кода истёк."),
+        const SizedBox(height: 36),
         CustomButton(
           variant: CustomButtonVariants.primary,
           onPressed: () => print("Send again click"),
@@ -222,6 +130,47 @@ class ConfirmPage extends StatelessWidget {
           accentColor: const Color(0xFFA03FFF),
         )
       ],
+    );
+  }
+
+  Widget sectionTitle(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w500,
+        fontSize: 20,
+        height: 1,
+        letterSpacing: 0.1,
+      ),
+    );
+  }
+
+  Widget sectionSubtitle(String text) {
+    return Text(
+      text,
+      style: const TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        height: 20 / 16,
+        letterSpacing: 0.1,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget sectionText(String text, {Color color = Colors.black}) {
+    return Text(
+      text,
+      style: TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w500,
+        fontSize: 16,
+        height: 16 / 20,
+        letterSpacing: 0.1,
+        color: color,
+      ),
     );
   }
 }

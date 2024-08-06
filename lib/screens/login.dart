@@ -26,9 +26,7 @@ class LoginPageState extends State<LoginPage> {
           height: 85,
           colorFilter: const ColorFilter.mode(Colors.black, BlendMode.dstIn),
         ),
-        const SizedBox(
-          height: 4,
-        ),
+        const SizedBox(height: 4),
         const Text(
           "ПРИЛОЖЕНИЕ ДЛЯ ФИТНЕС-КЛУБОВ",
           textAlign: TextAlign.center,
@@ -57,31 +55,25 @@ class LoginPageState extends State<LoginPage> {
           const TextSpan(
             text: 'Продолжая, вы соглашаетесь с обработкой ',
           ),
-          TextSpan(
-            text: 'Персональных данных',
-            style: const TextStyle(
-              color: Color(0xFFBA87FC),
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                print('Персональные данные');
-              },
-          ),
+          linkText('Персональных данных', () {
+            print('Персональные данные');
+          }),
           const TextSpan(
             text: ' и ',
           ),
-          TextSpan(
-            text: 'Пользовательским соглашением',
-            style: const TextStyle(
-              color: Color(0xFFBA87FC),
-            ),
-            recognizer: TapGestureRecognizer()
-              ..onTap = () {
-                print('Пользовательское соглашение');
-              },
-          ),
+          linkText('Пользовательским соглашением', () {
+            print('Пользовательское соглашение');
+          }),
         ],
       ),
+    );
+  }
+
+  TextSpan linkText(String text, GestureTapCallback onTap) {
+    return TextSpan(
+      text: text,
+      style: const TextStyle(color: Color(0xFFBA87FC)),
+      recognizer: TapGestureRecognizer()..onTap = onTap,
     );
   }
 
@@ -90,49 +82,45 @@ class LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text("Введите номер телефона",
-            textAlign: TextAlign.start,
-            style: TextStyle(
-                fontFamily: 'Roboto',
-                fontWeight: FontWeight.w500,
-                fontSize: 20,
-                letterSpacing: 0.1,
-                height: 1)),
-        // TODO: Что-то не так либо с виджетом TextFieldComponents, либо с отступом.
-        const SizedBox(
-          height: 2,
-        ),
+        sectionTitle("Введите номер телефона"),
+        const SizedBox(height: 2),
         const TextFieldComponents(),
-        const SizedBox(
-          height: 2,
-        ),
+        const SizedBox(height: 2),
         CustomButton(
-            text: "Войти через Telegram",
-            leftSvg: SvgPicture.asset(
-              "assets/svgs/telegram_logo.svg",
-              height: 12,
-            ),
-            accentColor: const Color(0xFF006FFD),
-            showLeftSvg: true,
-            variant: CustomButtonVariants.primary,
-            // ignore: avoid_print
-            onPressed: () => print("enter via telegram pressed")),
-        const SizedBox(
-          height: 16,
+          text: "Войти через Telegram",
+          leftSvg: SvgPicture.asset(
+            "assets/svgs/telegram_logo.svg",
+            height: 12,
+          ),
+          accentColor: const Color(0xFF006FFD),
+          showLeftSvg: true,
+          variant: CustomButtonVariants.primary,
+          onPressed: () => print("enter via telegram pressed"),
         ),
+        const SizedBox(height: 16),
         richText(),
       ],
     );
   }
 
   Widget bottomLogo() {
-    return Column(
-      children: [
-        SvgPicture.asset(
-          "assets/svgs/gymatech_logo.svg",
-          height: 20,
-        ),
-      ],
+    return SvgPicture.asset(
+      "assets/svgs/gymatech_logo.svg",
+      height: 20,
+    );
+  }
+
+  Widget sectionTitle(String text) {
+    return Text(
+      text,
+      textAlign: TextAlign.start,
+      style: const TextStyle(
+        fontFamily: 'Roboto',
+        fontWeight: FontWeight.w500,
+        fontSize: 20,
+        letterSpacing: 0.1,
+        height: 1,
+      ),
     );
   }
 
