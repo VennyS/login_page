@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:login_page/components/text_field.dart';
 import 'package:login_page/components/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../screens/confirm.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -95,7 +96,12 @@ class LoginPageState extends State<LoginPage> {
           accentColor: const Color(0xFF006FFD),
           showLeftSvg: true,
           variant: CustomButtonVariants.primary,
-          onPressed: () => print("enter via telegram pressed"),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ConfirmPage()),
+            );
+          },
         ),
         const SizedBox(height: 16),
         richText(),

@@ -21,9 +21,9 @@ class ConfirmPage extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    topPart(),
+                    topPart(context),
                     const SizedBox(height: 36),
-                    codeExpired(),
+                    codeFormPart(),
                     const SizedBox(height: 32),
                   ],
                 ),
@@ -31,14 +31,16 @@ class ConfirmPage extends StatelessWidget {
         ));
   }
 
-  Widget topPart() {
+  Widget topPart(BuildContext context) {
     return Column(
       children: [
         Align(
           alignment: Alignment.centerLeft,
           child: CustomButton(
             variant: CustomButtonVariants.primary,
-            onPressed: () => print("Leading click"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
             width: 48,
             height: 48,
             leftSvg: SvgPicture.asset(
@@ -71,6 +73,9 @@ class ConfirmPage extends StatelessWidget {
           height: 60,
           width: 250,
           color: Colors.red,
+        ),
+        const SizedBox(
+          height: 36,
         ),
         sendAgain(),
       ],
