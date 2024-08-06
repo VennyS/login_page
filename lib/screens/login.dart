@@ -4,6 +4,7 @@ import 'package:login_page/components/text_field.dart';
 import 'package:login_page/components/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/confirm.dart';
+import 'package:login_page/components/phote_formatter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -13,9 +14,21 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
+  final TextEditingController _phoneController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+  }
+
+  void _clearTextField() {
+    _phoneController.clear();
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose(); // Не забудьте освободить контроллер
+    super.dispose();
   }
 
   Widget topLogo() {
@@ -84,9 +97,26 @@ class LoginPageState extends State<LoginPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         sectionTitle("Введите номер телефона"),
-        const SizedBox(height: 2),
-        const TextFieldComponents(),
-        const SizedBox(height: 2),
+        const SizedBox(height: 12),
+        TextFieldWidget(
+          unit: "+7",
+          showUnit: true,
+          placeHolder: "(XXX) XXX-XX-XX",
+          showPlaceHolder: true,
+          // TODO: поправить цвет иконки
+          icon: SvgPicture.asset(
+            "assets/svgs/cross.svg",
+            height: 16,
+            colorFilter:
+                const ColorFilter.mode(Color(0xFF8F9098), BlendMode.dstIn),
+          ),
+          showIcon: true,
+          typingStateColor: const Color(0xFFBA87FC),
+          inputFormatter: PhoneNumberFormatter(),
+          controller: _phoneController,
+          onSuffixIconPressed: _clearTextField,
+        ),
+        const SizedBox(height: 8),
         CustomButtonWidget(
           text: "Войти через Telegram",
           leftSvg: SvgPicture.asset(
