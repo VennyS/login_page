@@ -25,11 +25,10 @@ class ConfirmPage extends StatelessWidget {
                     const SizedBox(
                       height: 36,
                     ),
-                    codeFormPart(),
+                    codeExpired(),
                     const SizedBox(
-                      height: 36,
+                      height: 32,
                     ),
-                    bottomPart(),
                   ],
                 ),
               )),
@@ -110,11 +109,12 @@ class ConfirmPage extends StatelessWidget {
           width: 250,
           color: Colors.red,
         ),
+        sendAgain(),
       ],
     );
   }
 
-  Widget bottomPart() {
+  Widget sendAgain() {
     return Column(
       children: [
         CustomButton(
@@ -138,6 +138,88 @@ class ConfirmPage extends StatelessWidget {
                 color: Color(0xFFA03FFF)),
           ),
           onTap: () => print("Send again click"),
+        )
+      ],
+    );
+  }
+
+  Widget botIsntRunning() {
+    return Column(children: [
+      const Text("Бот не запущен",
+          style: TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w500,
+              fontSize: 20,
+              height: 1,
+              letterSpacing: 0.1)),
+      const SizedBox(
+        height: 16,
+      ),
+      const Text(
+        "Вы будете перенаправлены в Телеграм к нашему боту “Gymapp.Бот”.",
+        style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+            height: 20 / 16,
+            letterSpacing: 0.1),
+        textAlign: TextAlign.center,
+      ),
+      const Text(
+        "После нажмите “Старт” и следуйте инструкциям.",
+        style: TextStyle(
+            fontFamily: 'Roboto',
+            fontWeight: FontWeight.w400,
+            fontSize: 16,
+            height: 20 / 16,
+            letterSpacing: 0.1),
+        textAlign: TextAlign.center,
+      ),
+      const SizedBox(
+        height: 36,
+      ),
+      CustomButton(
+        variant: CustomButtonVariants.primary,
+        onPressed: () => print("Link to telegram click"),
+        text: "Перейти в telegram",
+        leftSvg: SvgPicture.asset("assets/svgs/telegram_logo.svg"),
+        showLeftSvg: true,
+        accentColor: const Color(0xFF006FFD),
+      )
+    ]);
+  }
+
+  Widget codeExpired() {
+    return Column(
+      children: [
+        const Text("Подтверждение номера",
+            style: TextStyle(
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w500,
+                fontSize: 20,
+                height: 1,
+                letterSpacing: 0.1)),
+        const SizedBox(
+          height: 16,
+        ),
+        const Text(
+          "Срок действия кода истёк.",
+          style: TextStyle(
+              fontFamily: 'Roboto',
+              fontWeight: FontWeight.w400,
+              fontSize: 16,
+              height: 20 / 16,
+              letterSpacing: 0.1),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(
+          height: 36,
+        ),
+        CustomButton(
+          variant: CustomButtonVariants.primary,
+          onPressed: () => print("Send again click"),
+          text: "Отправить новый код",
+          accentColor: const Color(0xFFA03FFF),
         )
       ],
     );
