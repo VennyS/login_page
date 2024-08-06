@@ -21,6 +21,7 @@ class LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
+  // TODO: Странно работает при фокусе
   void _clearTextField() {
     _phoneController.clear();
   }
@@ -115,6 +116,7 @@ class LoginPageState extends State<LoginPage> {
           inputFormatter: PhoneNumberFormatter(),
           controller: _phoneController,
           onSuffixIconPressed: _clearTextField,
+          keyboard: TextInputType.number,
         ),
         const SizedBox(height: 8),
         CustomButtonWidget(

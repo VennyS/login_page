@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/services.dart';
 
+// TODO: Нельзя стирать то, что в скобках..
 class PhoneNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(

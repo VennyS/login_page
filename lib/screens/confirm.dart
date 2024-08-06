@@ -90,8 +90,11 @@ class _ConfirmPageState extends State<ConfirmPage> {
     return Column(
       children: [
         _sectionTitle("Подтверждение номера"),
+        const SizedBox(
+          height: 4,
+        ),
         _sectionSubtitle(
-            "Мы отправили код в телеграмме на номер +7 900 000 00 00"),
+            "Мы отправили код в телеграмме\n на номер +7 900 000 00 00"),
         const SizedBox(height: 36),
         Stack(
           clipBehavior: Clip.none,
@@ -106,12 +109,11 @@ class _ConfirmPageState extends State<ConfirmPage> {
             if (!isCodeCorrect)
               const Positioned(
                 left: -2,
-                top: -20, // Adjust as needed for exact alignment
+                top: -20,
                 child: Align(
                   alignment: Alignment.topCenter,
                   child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 8.0), // Adjust for padding if needed
+                    padding: EdgeInsets.only(left: 8.0),
                     child: Text(
                       "Неверный код",
                       style: TextStyle(
@@ -136,7 +138,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   bool isFourDigitNumber(int number) {
     String numberStr = number.toString();
-    return numberStr.length == 4;
+    return numberStr.length == 6;
   }
 
   Widget _sendAgain() {
@@ -162,7 +164,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   void onClickAccept(int code) {
     setState(() {
-      isCodeCorrect = code == 1234;
+      isCodeCorrect = code == 123456;
       _codeInputKey.currentState?.clearCode();
       if (!isCodeCorrect) {
         isCodeValid = false;

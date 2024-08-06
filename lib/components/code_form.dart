@@ -7,7 +7,7 @@ class CodeInputWidget extends StatefulWidget {
 
   const CodeInputWidget({
     super.key,
-    this.codeLength = 4,
+    this.codeLength = 6,
     required this.onCodeEntered,
     this.accentColor,
   });
@@ -85,14 +85,18 @@ class CodeInputWidgetState extends State<CodeInputWidget> {
               keyboardType: TextInputType.number,
               maxLength: 1,
               decoration: InputDecoration(
-                filled: true,
-                fillColor: widget.accentColor ?? const Color(0xFFF1EDF5),
-                counterText: '',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                  borderSide: BorderSide.none,
-                ),
-              ),
+                  filled: true,
+                  fillColor: widget.accentColor ?? const Color(0xFFF1EDF5),
+                  counterText: '',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                      //борт в typing состоянии
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                          color: Color(0xFFA03FFF), width: 2))),
               onChanged: (value) => nextField(value, index),
             ),
           ),

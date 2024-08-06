@@ -15,6 +15,7 @@ class TextFieldWidget extends StatefulWidget {
   final VoidCallback? onSuffixIconPressed;
   final TextInputFormatter? inputFormatter;
   final TextEditingController? controller;
+  final TextInputType? keyboard;
 
   const TextFieldWidget(
       {super.key,
@@ -30,7 +31,8 @@ class TextFieldWidget extends StatefulWidget {
       // this.obscureText = false,
       this.onSuffixIconPressed,
       this.inputFormatter,
-      this.controller});
+      this.controller,
+      this.keyboard});
 
   @override
   State<TextFieldWidget> createState() =>
@@ -80,6 +82,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         });
       },
       controller: widget.controller,
+      keyboardType: widget.keyboard,
       focusNode: emptyPasswordFocusNode,
       enabled: true, //если установить false , то будет состояние inactive
       onTap: () {
@@ -115,7 +118,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         enabledBorder: OutlineInputBorder(
             //борт в empty состоянии
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: emptyStateColor, width: 1)),
+            borderSide: const BorderSide(color: emptyStateColor, width: 1)),
         suffixIcon: widget.showIcon && widget.icon != null
             ? IconButton(
                 icon: widget.icon!,
