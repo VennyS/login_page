@@ -7,7 +7,7 @@ class CodeInputWidget extends StatefulWidget {
 
   const CodeInputWidget({
     super.key,
-    this.codeLength = 6,
+    this.codeLength = 5,
     required this.onCodeEntered,
     this.accentColor,
   });

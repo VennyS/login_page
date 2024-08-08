@@ -12,10 +12,13 @@ class TextFieldWidget extends StatefulWidget {
   final bool showIcon;
   final bool showUnit;
   final Color? typingStateColor;
+  final Color? emptyStateColor;
+  final Color? errorStateColor;
   final VoidCallback? onSuffixIconPressed;
   final TextInputFormatter? inputFormatter;
   final TextEditingController? controller;
   final TextInputType? keyboard;
+  final bool hasError;
 
   const TextFieldWidget(
       {super.key,
@@ -28,31 +31,36 @@ class TextFieldWidget extends StatefulWidget {
       this.unit,
       this.showUnit = false,
       this.typingStateColor,
+      this.emptyStateColor,
+      this.errorStateColor,
       // this.obscureText = false,
       this.onSuffixIconPressed,
       this.inputFormatter,
       this.controller,
-      this.keyboard});
+      this.keyboard,
+      this.hasError = false});
 
   @override
   State<TextFieldWidget> createState() =>
-      _TextFieldWidgetState(emptyPasswordFocusNode: FocusNode());
+      TextFieldWidgetState(emptyPasswordFocusNode: FocusNode());
 }
 
-class _TextFieldWidgetState extends State<TextFieldWidget> {
+class TextFieldWidgetState extends State<TextFieldWidget> {
   bool emptyShowPussword = false;
+  late bool _hasError;
 
   late FocusNode emptyPasswordFocusNode;
 
   String errorText = '';
 
-  _TextFieldWidgetState({
+  TextFieldWidgetState({
     required this.emptyPasswordFocusNode,
   });
 
   @override
   void initState() {
     super.initState();
+    _hasError = widget.hasError;
     emptyPasswordFocusNode = FocusNode();
   }
 
@@ -69,7 +77,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
 
   Widget _emptyTextField() {
     final typingStateColor = widget.typingStateColor ?? const Color(0xFF006FFD);
-    const emptyStateColor = Color(0xFFC5C6CC);
+    final emptyStateColor = widget.emptyStateColor ?? const Color(0xFFC5C6CC);
+    final errorStateColor = widget.errorStateColor ?? const Color(0xFFFFE2E5);
 
     return TextField(
       onChanged: (value) {
@@ -106,19 +115,21 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             : null,
         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
         errorText: errorText.isEmpty ? null : errorText,
-        //labelText: 'Title',                   //title
         border: OutlineInputBorder(
-          //борт для Error состояния
           borderRadius: BorderRadius.circular(12),
         ),
         focusedBorder: OutlineInputBorder(
             //борт в typing состоянии
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: typingStateColor, width: 2)),
+            borderSide: BorderSide(
+                color: widget.hasError ? errorStateColor : typingStateColor,
+                width: 2)),
         enabledBorder: OutlineInputBorder(
             //борт в empty состоянии
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: emptyStateColor, width: 1)),
+            borderSide: BorderSide(
+                color: widget.hasError ? errorStateColor : emptyStateColor,
+                width: 1)),
         suffixIcon: widget.showIcon && widget.icon != null
             ? IconButton(
                 icon: widget.icon!,
@@ -134,6 +145,18 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
             : null,
       ),
     );
+  }
+
+  void enableErrorState() {
+    setState(() {
+      _hasError = true;
+    });
+  }
+
+  void disableErrorState() {
+    setState(() {
+      _hasError = false;
+    });
   }
 
   TextStyle textStyle() {

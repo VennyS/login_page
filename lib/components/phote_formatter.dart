@@ -18,11 +18,9 @@ class PhoneNumberFormatter extends TextInputFormatter {
 
     final buffer = StringBuffer();
 
-    // Форматируем текст в виде (XXX) XXX-XX-XX
+    // Форматируем текст в виде XXX XXX-XX-XX
     if (text.isNotEmpty) {
-      buffer.write('(');
       buffer.write(text.substring(0, min(3, text.length)));
-      buffer.write(')');
     }
     if (text.length > 3) {
       buffer.write(' ');
