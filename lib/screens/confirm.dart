@@ -1,22 +1,65 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:login_page/api/api_service.dart';
 import 'package:login_page/components/code_form.dart';
 import 'package:login_page/components/custom_button.dart';
+import 'package:login_page/screens/base.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ConfirmPage extends StatefulWidget {
-  const ConfirmPage({super.key});
+  final String phone;
+  final String responseMessage;
+  const ConfirmPage(
+      {super.key, required this.phone, required this.responseMessage});
 
   @override
-  _ConfirmPageState createState() => _ConfirmPageState();
+  ConfirmPageState createState() => ConfirmPageState();
 }
 
-class _ConfirmPageState extends State<ConfirmPage> {
+class ConfirmPageState extends State<ConfirmPage> {
   late int enteredCode = 0;
   late bool isCodeCorrect = true;
   late bool isCodeValid = false;
+  late String response;
 
   final GlobalKey<CodeInputWidgetState> _codeInputKey =
       GlobalKey<CodeInputWidgetState>();
+
+  late Timer _timer;
+  int _start = 60; // Начальное время таймера
+
+  bool _showResendButton = false;
+  String _timerText = 'Отправить повторно через 60 секунд';
+
+  @override
+  void initState() {
+    super.initState();
+    response = widget.responseMessage;
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_start == 0) {
+        setState(() {
+          _timer.cancel();
+          _showResendButton = true;
+          _timerText = 'Отправить повторно';
+        });
+      } else {
+        setState(() {
+          _start--;
+          _timerText = 'Отправить повторно через $_start секунд';
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +80,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
                 children: [
                   _topPart(context),
                   const SizedBox(height: 36),
-                  _codeFormPart(),
+                  _choosedMiddlePart(response),
                   const SizedBox(height: 32),
                 ],
               ),
@@ -46,6 +89,19 @@ class _ConfirmPageState extends State<ConfirmPage> {
         ),
       ),
     );
+  }
+
+  Widget _choosedMiddlePart(String response) {
+    switch (response) {
+      case "verified phone at telegram":
+      case "https://t.me/GAAuthTest_bot":
+        return _botIsntRunning();
+      case "New code is generated":
+      case "Code in telegram":
+        return _codeFormPart();
+      default:
+        return _botIsntRunning();
+    }
   }
 
   Widget _topPart(BuildContext context) {
@@ -83,6 +139,8 @@ class _ConfirmPageState extends State<ConfirmPage> {
     setState(() {
       enteredCode = int.parse(code);
       isCodeValid = isFourDigitNumber(enteredCode);
+
+      MaterialPageRoute(builder: (context) => const BaseScreen());
     });
   }
 
@@ -90,9 +148,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
     return Column(
       children: [
         _sectionTitle("Подтверждение номера"),
-        const SizedBox(
-          height: 4,
-        ),
+        const SizedBox(height: 4),
         _sectionSubtitle(
             "Мы отправили код в телеграмме\n на номер +7 900 000 00 00"),
         const SizedBox(height: 36),
@@ -138,7 +194,7 @@ class _ConfirmPageState extends State<ConfirmPage> {
 
   bool isFourDigitNumber(int number) {
     String numberStr = number.toString();
-    return numberStr.length == 6;
+    return numberStr.length == 5;
   }
 
   Widget _sendAgain() {
@@ -154,21 +210,47 @@ class _ConfirmPageState extends State<ConfirmPage> {
         ),
         const SizedBox(height: 24),
         GestureDetector(
-          child: _sectionText("Отправить повторно",
-              color: const Color(0xFFA03FFF)),
-          onTap: () => print("Send again click"),
-        ),
+            onTap: _showResendButton ? _resendCode : null,
+            child: Text(
+              _timerText,
+              style: TextStyle(
+                color: _showResendButton
+                    ? const Color(0xFFA03FFF)
+                    : const Color(0xFF000000),
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                height: 16 / 20,
+                letterSpacing: 0.1,
+              ),
+            )),
       ],
     );
   }
 
-  void onClickAccept(int code) {
+  void onClickAccept(int code) async {
+    final response =
+        await ApiService().proccesCode(widget.phone, code.toString());
     setState(() {
-      isCodeCorrect = code == 123456;
+      isCodeCorrect = response == "Успешно";
       _codeInputKey.currentState?.clearCode();
       if (!isCodeCorrect) {
         isCodeValid = false;
+      } else {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const BaseScreen(),
+            ));
       }
+    });
+  }
+
+  void _resendCode() {
+    setState(() {
+      _start = 60;
+      _showResendButton = false;
+      _startTimer();
     });
   }
 
@@ -182,7 +264,9 @@ class _ConfirmPageState extends State<ConfirmPage> {
         const SizedBox(height: 36),
         CustomButtonWidget(
           variant: CustomButtonVariants.primary,
-          onPressed: () => print("Link to telegram click"),
+          onPressed: () {
+            _launchURL("https://t.me/GAAuthTest_bot");
+          },
           text: "Перейти в telegram",
           leftSvg: SvgPicture.asset("assets/svgs/telegram_logo.svg"),
           showLeftSvg: true,
@@ -201,7 +285,11 @@ class _ConfirmPageState extends State<ConfirmPage> {
         const SizedBox(height: 36),
         CustomButtonWidget(
           variant: CustomButtonVariants.primary,
-          onPressed: () => print("Send again click"),
+          onPressed: () {
+            setState(() {
+              response = "Code in telegram";
+            });
+          },
           text: "Отправить новый код",
           accentColor: const Color(0xFFA03FFF),
         ),
@@ -236,17 +324,17 @@ class _ConfirmPageState extends State<ConfirmPage> {
     );
   }
 
-  Widget _sectionText(String text, {Color color = Colors.black}) {
-    return Text(
-      text,
-      style: TextStyle(
-        fontFamily: 'Roboto',
-        fontWeight: FontWeight.w500,
-        fontSize: 16,
-        height: 16 / 20,
-        letterSpacing: 0.1,
-        color: color,
-      ),
-    );
+  Future<void> _launchURL(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      // Сообщаем об ошибке, если URL не может быть открыт
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Не удалось открыть URL: $urlString'),
+        ),
+      );
+    }
   }
 }

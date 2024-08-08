@@ -1,5 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:login_page/api/api_service.dart';
 import 'package:login_page/components/text_field.dart';
 import 'package:login_page/components/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -15,21 +17,76 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage> {
   final TextEditingController _phoneController = TextEditingController();
+  GlobalKey<TextFieldWidgetState> textFieldKey =
+      GlobalKey<TextFieldWidgetState>();
+  String _responseMessage = '';
+  bool _isPhoneElevenDigits = false;
+  bool _isLoading = false;
+  bool _hasError = false;
 
   @override
   void initState() {
+    _phoneController.addListener(_onTextChanged);
     super.initState();
   }
 
-  // TODO: Странно работает при фокусе
   void _clearTextField() {
     _phoneController.clear();
   }
 
   @override
   void dispose() {
-    _phoneController.dispose(); // Не забудьте освободить контроллер
+    _phoneController.removeListener(_onTextChanged);
+    _phoneController.dispose();
     super.dispose();
+  }
+
+  void _onTextChanged() {
+    textFieldKey.currentState?.disableErrorState.call();
+    setState(() {
+      _isPhoneElevenDigits = _phoneController.text.length == 13;
+    });
+  }
+
+  Future<void> _authPhone() async {
+    setState(() {
+      _isLoading = true;
+      textFieldKey.currentState?.disableErrorState.call();
+      _responseMessage = '';
+    });
+
+    try {
+      final result = await ApiService()
+          .processPhone(cleanPhoneNumber(_phoneController.text));
+
+      if (mounted) {
+        setState(() {
+          _responseMessage = result;
+        });
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ConfirmPage(
+                    phone: cleanPhoneNumber(_phoneController.text),
+                    responseMessage: _responseMessage,
+                  )),
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(() {
+          textFieldKey.currentState?.enableErrorState.call();
+          _responseMessage = error.toString();
+        });
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   Widget topLogo() {
@@ -70,15 +127,11 @@ class LoginPageState extends State<LoginPage> {
           const TextSpan(
             text: 'Продолжая, вы соглашаетесь с обработкой ',
           ),
-          linkText('Персональных данных', () {
-            print('Персональные данные');
-          }),
+          linkText('Персональных данных', () {}),
           const TextSpan(
             text: ' и ',
           ),
-          linkText('Пользовательским соглашением', () {
-            print('Пользовательское соглашение');
-          }),
+          linkText('Пользовательским соглашением', () {}),
         ],
       ),
     );
@@ -102,9 +155,8 @@ class LoginPageState extends State<LoginPage> {
         TextFieldWidget(
           unit: "+7",
           showUnit: true,
-          placeHolder: "(XXX) XXX-XX-XX",
+          placeHolder: "XXX XXX-XX-XX",
           showPlaceHolder: true,
-          // TODO: поправить цвет иконки
           icon: SvgPicture.asset(
             "assets/svgs/cross.svg",
             height: 16,
@@ -122,18 +174,20 @@ class LoginPageState extends State<LoginPage> {
         CustomButtonWidget(
           text: "Войти через Telegram",
           leftSvg: SvgPicture.asset(
+            colorFilter: ColorFilter.mode(
+                // Поправить цвет. Не меняется на серый в неактивном состоянии.
+                _isPhoneElevenDigits ? Colors.white : const Color(0xFF817B89),
+                BlendMode.dstIn),
             "assets/svgs/telegram_logo.svg",
             height: 12,
           ),
-          accentColor: const Color(0xFF006FFD),
+          textColor: _isPhoneElevenDigits ? null : const Color(0xFF817B89),
+          accentColor: _isPhoneElevenDigits
+              ? const Color(0xFF006FFD)
+              : const Color(0xFFF1EDF5),
           showLeftSvg: true,
           variant: CustomButtonVariants.primary,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const ConfirmPage()),
-            );
-          },
+          onPressed: _isPhoneElevenDigits ? _authPhone : null,
         ),
         const SizedBox(height: 16),
         richText(),
@@ -160,6 +214,10 @@ class LoginPageState extends State<LoginPage> {
         height: 1,
       ),
     );
+  }
+
+  String cleanPhoneNumber(String formattedPhoneNumber) {
+    return "7${formattedPhoneNumber.replaceAll(RegExp(r'\D'), '')}";
   }
 
   @override
