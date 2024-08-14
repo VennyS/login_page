@@ -19,4 +19,5 @@ class SvgInfo {
   static const gymatechlogo = "assets/svgs/gymatech_logo.svg";
   static const leftarrow = "assets/svgs/left_arrow.svg";
   static const telegramlogo = "assets/svgs/telegram_logo.svg";
+  static const close = "assets/svgs/close.svg";
 }
