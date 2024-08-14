@@ -11,9 +11,9 @@ class TextFieldWidget extends StatefulWidget {
   final bool showPlaceHolder;
   final bool showIcon;
   final bool showUnit;
-  final Color? typingStateColor;
-  final Color? emptyStateColor;
-  final Color? errorStateColor;
+  final Color typingStateColor;
+  final Color emptyStateColor;
+  final Color errorStateColor;
   final VoidCallback? onSuffixIconPressed;
   final TextInputFormatter? inputFormatter;
   final TextEditingController? controller;
@@ -30,9 +30,9 @@ class TextFieldWidget extends StatefulWidget {
       this.showIcon = false,
       this.unit,
       this.showUnit = false,
-      this.typingStateColor,
-      this.emptyStateColor,
-      this.errorStateColor,
+      this.typingStateColor = const Color(0xFF006FFD),
+      this.emptyStateColor = const Color(0xFFC5C6CC),
+      this.errorStateColor = const Color(0xFFFFE2E5),
       // this.obscureText = false,
       this.onSuffixIconPressed,
       this.inputFormatter,
@@ -76,10 +76,6 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
   }
 
   Widget _emptyTextField() {
-    final typingStateColor = widget.typingStateColor ?? const Color(0xFF006FFD);
-    final emptyStateColor = widget.emptyStateColor ?? const Color(0xFFC5C6CC);
-    final errorStateColor = widget.errorStateColor ?? const Color(0xFFFFE2E5);
-
     return TextField(
       onChanged: (value) {
         setState(() {
@@ -122,13 +118,16 @@ class TextFieldWidgetState extends State<TextFieldWidget> {
             //борт в typing состоянии
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-                color: widget.hasError ? errorStateColor : typingStateColor,
+                color: _hasError
+                    ? widget.errorStateColor
+                    : widget.typingStateColor,
                 width: 2)),
         enabledBorder: OutlineInputBorder(
             //борт в empty состоянии
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-                color: widget.hasError ? errorStateColor : emptyStateColor,
+                color:
+                    _hasError ? widget.errorStateColor : widget.emptyStateColor,
                 width: 1)),
         suffixIcon: widget.showIcon && widget.icon != null
             ? IconButton(
