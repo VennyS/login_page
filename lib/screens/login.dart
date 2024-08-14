@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:login_page/api/api_service.dart';
 import 'package:login_page/components/text_field.dart';
 import 'package:login_page/components/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../screens/confirm.dart';
+import 'package:login_page/screens/confirm.dart';
 import 'package:login_page/components/phote_formatter.dart';
+import 'package:login_page/const.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,8 +21,6 @@ class LoginPageState extends State<LoginPage> {
       GlobalKey<TextFieldWidgetState>();
   String _responseMessage = '';
   bool _isPhoneElevenDigits = false;
-  bool _isLoading = false;
-  bool _hasError = false;
 
   @override
   void initState() {
@@ -50,7 +48,6 @@ class LoginPageState extends State<LoginPage> {
 
   Future<void> _authPhone() async {
     setState(() {
-      _isLoading = true;
       textFieldKey.currentState?.disableErrorState.call();
       _responseMessage = '';
     });
@@ -80,12 +77,6 @@ class LoginPageState extends State<LoginPage> {
           _responseMessage = error.toString();
         });
       }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
     }
   }
 
@@ -94,22 +85,21 @@ class LoginPageState extends State<LoginPage> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SvgPicture.asset(
-          "assets/svgs/gymapp_logo.svg",
+          SvgInfo.gymapplogo,
           height: 85,
           colorFilter: const ColorFilter.mode(Colors.black, BlendMode.dstIn),
         ),
         const SizedBox(height: 4),
-        const Text(
-          "ПРИЛОЖЕНИЕ ДЛЯ ФИТНЕС-КЛУБОВ",
-          textAlign: TextAlign.center,
-          style: TextStyle(
+        const Text("ПРИЛОЖЕНИЕ ДЛЯ ФИТНЕС-КЛУБОВ",
+            textAlign: TextAlign.center,
+            style: TextStyle(
               fontFamily: 'Inter',
               fontWeight: FontWeight.w900,
               fontSize: 13,
               letterSpacing: -0.41,
               height: 22 / 13,
-              color: Color(0xFFA03FFF)),
-        ),
+              color: ColorInfo.purpleDarkest,
+            )),
       ],
     );
   }
@@ -121,7 +111,7 @@ class LoginPageState extends State<LoginPage> {
           fontFamily: 'Inter',
           fontWeight: FontWeight.w400,
           fontSize: 14,
-          color: Color(0xFF8F9098),
+          color: ColorInfo.darkGreyLightest,
         ),
         children: [
           const TextSpan(
@@ -140,7 +130,7 @@ class LoginPageState extends State<LoginPage> {
   TextSpan linkText(String text, GestureTapCallback onTap) {
     return TextSpan(
       text: text,
-      style: const TextStyle(color: Color(0xFFBA87FC)),
+      style: const TextStyle(color: ColorInfo.purpleDark),
       recognizer: TapGestureRecognizer()..onTap = onTap,
     );
   }
@@ -158,13 +148,13 @@ class LoginPageState extends State<LoginPage> {
           placeHolder: "XXX XXX-XX-XX",
           showPlaceHolder: true,
           icon: SvgPicture.asset(
-            "assets/svgs/cross.svg",
+            SvgInfo.cross,
             height: 16,
-            colorFilter:
-                const ColorFilter.mode(Color(0xFF8F9098), BlendMode.dstIn),
+            colorFilter: const ColorFilter.mode(
+                ColorInfo.darkGreyLightest, BlendMode.dstIn),
           ),
           showIcon: true,
-          typingStateColor: const Color(0xFFBA87FC),
+          typingStateColor: ColorInfo.purpleDark,
           inputFormatter: PhoneNumberFormatter(),
           controller: _phoneController,
           onSuffixIconPressed: _clearTextField,
@@ -174,17 +164,18 @@ class LoginPageState extends State<LoginPage> {
         CustomButtonWidget(
           text: "Войти через Telegram",
           leftSvg: SvgPicture.asset(
+            SvgInfo.telegramlogo,
             colorFilter: ColorFilter.mode(
-                // Поправить цвет. Не меняется на серый в неактивном состоянии.
-                _isPhoneElevenDigits ? Colors.white : const Color(0xFF817B89),
-                BlendMode.dstIn),
-            "assets/svgs/telegram_logo.svg",
+                _isPhoneElevenDigits
+                    ? Colors.white
+                    : ColorInfo.darkGreyLightest,
+                BlendMode.srcIn),
             height: 12,
           ),
-          textColor: _isPhoneElevenDigits ? null : const Color(0xFF817B89),
+          textColor: _isPhoneElevenDigits ? null : ColorInfo.darkGreyLightest,
           accentColor: _isPhoneElevenDigits
-              ? const Color(0xFF006FFD)
-              : const Color(0xFFF1EDF5),
+              ? ColorInfo.highlightDarkest
+              : ColorInfo.purpleGreyLight,
           showLeftSvg: true,
           variant: CustomButtonVariants.primary,
           onPressed: _isPhoneElevenDigits ? _authPhone : null,
@@ -197,7 +188,7 @@ class LoginPageState extends State<LoginPage> {
 
   Widget bottomLogo() {
     return SvgPicture.asset(
-      "assets/svgs/gymatech_logo.svg",
+      SvgInfo.gymatechlogo,
       height: 20,
     );
   }
