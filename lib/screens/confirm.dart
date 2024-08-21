@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login_page/api/api_service.dart';
-import 'package:login_page/components/code_form.dart';
-import 'package:login_page/components/custom_button.dart';
 import 'package:login_page/const.dart';
 import 'package:login_page/screens/base.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:widgets/code_form.dart';
+import 'package:widgets/custom_button.dart';
 
 class ConfirmPage extends StatefulWidget {
   final String phone;
@@ -29,10 +29,10 @@ class ConfirmPageState extends State<ConfirmPage> {
 
   // Таймер для кнопки отправить повторно.
   Timer? _sendAgainTimer;
-  static const int _sendAgainStart = 60;
+  static const int _sendAgainStart = 10;
   int _sendAgainTemp = _sendAgainStart;
   bool _showResendButton = false;
-  String _timerText = 'Отправить повторно через 60 секунд';
+  String _timerText = 'Отправить повторно через 10 секунд';
 
   // Таймер до появления страницы с текстом «Код истек»
   Timer? _codeExpiredTimer;
@@ -48,17 +48,15 @@ class ConfirmPageState extends State<ConfirmPage> {
   void _startSendAgainTimer() {
     _sendAgainTimer?.cancel();
     _sendAgainTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_sendAgainTemp < 1.5) {
+      if (_sendAgainTemp <= 1) {
         setState(() {
-          _sendAgainTimer!.cancel();
-          _showResendButton = true;
+          _sendAgainTimer?.cancel();
+          _showResendButton = true; // Активируем кнопку отправки
           _timerText = 'Отправить повторно';
-          _sendAgainTemp = _sendAgainStart;
         });
       } else {
         setState(() {
           _sendAgainTemp--;
-          _showResendButton = false;
           _timerText = 'Отправить повторно через $_sendAgainTemp секунд';
         });
       }
@@ -147,8 +145,8 @@ class ConfirmPageState extends State<ConfirmPage> {
             onPressed: () {
               Navigator.pop(context);
             },
-            width: 48,
-            height: 48,
+            width: 52,
+            height: 52,
             // TODO: Поправить цвет иконки
             leftSvg: SvgPicture.asset(
               SvgInfo.leftarrow,
@@ -290,12 +288,14 @@ class ConfirmPageState extends State<ConfirmPage> {
 
   void _resendCode() async {
     setState(() {
-      _sendAgainTemp = _sendAgainTemp;
-      _showResendButton = false;
-      _startSendAgainTimer();
+      _showResendButton = false; // Деактивируем кнопку после нажатия
+      _sendAgainTemp = _sendAgainStart; // Сбрасываем таймер
+      _timerText = 'Отправить повторно через $_sendAgainTemp секунд';
     });
 
-    ApiService().proccesCode(widget.phone, "0");
+    _startSendAgainTimer();
+
+    await ApiService().proccesCode(widget.phone, "0");
   }
 
   Widget _botIsntRunning() {

@@ -1,38 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:login_page/components/toast.dart';
-import 'package:login_page/const.dart';
+import 'package:widgets/toast.dart';
 
 class BaseScreen extends StatefulWidget {
   const BaseScreen({super.key});
 
   @override
-  _BaseScreenState createState() => _BaseScreenState();
+  BaseScreenState createState() => BaseScreenState();
 }
 
-class _BaseScreenState extends State<BaseScreen> {
+class BaseScreenState extends State<BaseScreen> {
   @override
   void initState() {
     super.initState();
-    // Показываем тост сразу после загрузки страницы
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ToastManager().showToast(
-        context,
-        ToastWidget(
-          variant: ToastVariant.informative,
-          title: "Успешно",
-          description: "Добро пожаловать в приложение фитнес-клуба GYMATECH",
-          trailingIcon: SvgPicture.asset(SvgInfo.close),
-          showTrailingIcon: false,
-        ),
-      );
+          context,
+          const ToastWidget(
+            variant: ToastVariant.informative,
+            showTitle: true,
+            title: "Успешно",
+            showDescription: true,
+            description: "Добро пожаловать в приложение фитнес-клуба GYMATECH",
+          ),
+          ToastSide.top);
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Center(
+    return const Scaffold(
+      body: Center(
         child: SizedBox(),
       ),
     );

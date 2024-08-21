@@ -1,12 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:login_page/api/api_service.dart';
-import 'package:login_page/components/text_field.dart';
-import 'package:login_page/components/custom_button.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login_page/screens/confirm.dart';
 import 'package:login_page/components/phote_formatter.dart';
 import 'package:login_page/const.dart';
+import 'package:widgets/custom_button.dart';
+import 'package:widgets/text_field.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -178,7 +178,11 @@ class LoginPageState extends State<LoginPage> {
               : ColorInfo.purpleGreyLight,
           showLeftSvg: true,
           variant: CustomButtonVariants.primary,
-          onPressed: _isPhoneElevenDigits ? _authPhone : null,
+          onPressed: _isPhoneElevenDigits
+              ? () {
+                  _authPhone();
+                }
+              : () {},
         ),
         const SizedBox(height: 16),
         richText(),
