@@ -13,7 +13,7 @@ class BaseScreenState extends State<BaseScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ToastManager().showToast(
+      ToastManager.showToast(
           context,
           const ToastWidget(
             variant: ToastVariant.informative,

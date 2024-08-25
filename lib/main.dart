@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:login_page/api/api_service.dart';
-import 'package:login_page/api/config.dart';
+import 'package:widgets/api/api_service.dart';
+import 'package:widgets/api/config.dart';
 import 'screens/login.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Config.load();
-  ApiService().setBaseUrl(Config.baseUrl);
+  ApiService.setBaseUrl(Config.baseUrl);
   runApp(const MyApp());
 }
 

@@ -1,11 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:login_page/api/api_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:login_page/screens/confirm.dart';
 import 'package:login_page/components/phote_formatter.dart';
 import 'package:login_page/const.dart';
+import 'package:widgets/api/api_service.dart';
 import 'package:widgets/custom_button.dart';
+import 'package:widgets/logger/app_logger.dart';
 import 'package:widgets/text_field.dart';
 
 class LoginPage extends StatefulWidget {
@@ -53,23 +54,22 @@ class LoginPageState extends State<LoginPage> {
     });
 
     try {
-      final result = await ApiService()
-          .processPhone(cleanPhoneNumber(_phoneController.text));
+      final result = await ApiService.processPhone(
+          cleanPhoneNumber(_phoneController.text));
+      AppLogger.i("result: $result");
 
-      if (mounted) {
-        setState(() {
-          _responseMessage = result;
-        });
+      setState(() {
+        _responseMessage = result;
+      });
 
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => ConfirmPage(
-                    phone: cleanPhoneNumber(_phoneController.text),
-                    responseMessage: _responseMessage,
-                  )),
-        );
-      }
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConfirmPage(
+                  phone: cleanPhoneNumber(_phoneController.text),
+                  responseMessage: _responseMessage,
+                )),
+      );
     } catch (error) {
       if (mounted) {
         setState(() {

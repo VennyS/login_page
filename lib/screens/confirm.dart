@@ -1,12 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:login_page/api/api_service.dart';
 import 'package:login_page/const.dart';
 import 'package:login_page/screens/base.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:widgets/api/api_service.dart';
 import 'package:widgets/code_form.dart';
 import 'package:widgets/custom_button.dart';
+import 'package:widgets/logger/app_logger.dart';
 
 class ConfirmPage extends StatefulWidget {
   final String phone;
@@ -29,10 +30,10 @@ class ConfirmPageState extends State<ConfirmPage> {
 
   // Таймер для кнопки отправить повторно.
   Timer? _sendAgainTimer;
-  static const int _sendAgainStart = 10;
+  static const int _sendAgainStart = 60;
   int _sendAgainTemp = _sendAgainStart;
   bool _showResendButton = false;
-  String _timerText = 'Отправить повторно через 10 секунд';
+  String _timerText = 'Отправить повторно через $_sendAgainStart секунд';
 
   // Таймер до появления страницы с текстом «Код истек»
   Timer? _codeExpiredTimer;
@@ -121,6 +122,7 @@ class ConfirmPageState extends State<ConfirmPage> {
   }
 
   Widget _choosedMiddlePart(String response) {
+    AppLogger.i(response);
     switch (response) {
       case "code expired":
         return _codeExpired();
@@ -270,7 +272,7 @@ class ConfirmPageState extends State<ConfirmPage> {
 
   void onClickAccept(int code) async {
     final response =
-        await ApiService().proccesCode(widget.phone, code.toString());
+        await ApiService.proccesCode(widget.phone, code.toString());
     setState(() {
       isCodeCorrect = response == "Успешно";
       _codeInputKey.currentState?.clearCode();
@@ -295,7 +297,7 @@ class ConfirmPageState extends State<ConfirmPage> {
 
     _startSendAgainTimer();
 
-    await ApiService().proccesCode(widget.phone, "0");
+    await ApiService.proccesCode(widget.phone, "0");
   }
 
   Widget _botIsntRunning() {
@@ -310,6 +312,9 @@ class ConfirmPageState extends State<ConfirmPage> {
           variant: CustomButtonVariants.primary,
           onPressed: () {
             _launchURL("https://t.me/GAAuthTest_bot");
+            setState(() {
+              response = "Code in telegram";
+            });
           },
           text: "Перейти в telegram",
           leftSvg: SvgPicture.asset(SvgInfo.telegramlogo),

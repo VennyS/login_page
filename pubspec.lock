@@ -168,6 +168,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
+  logger:
+    dependency: transitive
+    description:
+      name: logger
+      sha256: "697d067c60c20999686a0add96cf6aba723b3aa1f83ecf806a8097231529ec32"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
   matcher:
     dependency: transitive
     description:
@@ -458,10 +466,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "7157c557d97ae59456b849124c7af391053a7ce9"
+      resolved-ref: "6da816ff53cb7b4316d0b1a46923a48b60431910"
       url: "https://github.com/VennyS/widgets"
     source: git
-    version: "0.0.6"
+    version: "0.0.9"
   xdg_directories:
     dependency: transitive
     description:
